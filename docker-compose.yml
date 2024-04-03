@@ -4,8 +4,6 @@ services:
     image: mysql:5.7
     container_name: db
     restart: always
-    networks:
-      - backend
     ports:
       - 3306:3306
     volumes:
@@ -13,29 +11,14 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: admin
       MYSQL_DATABASE: pedbot
-  app:
-    build: ./library-back-end
-    container_name: app
-    networks:
-      - backend
-      - frontend
-    restart: always
-    depends_on:
-      - db
-    ports:
-      - 3001:3001
-    volumes:
-      - app:/usr/app
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "5"
+    healthcheck:
+      test: '/usr/bin/mysql --user=root --password=admin --execute "SHOW DATABASES;"'
+      interval: 2s
+      timeout: 10s
+      retries: 10
   react:
     build: ./library-front-end
     container_name: react
-    networks:
-      - frontend
     restart: always
     ports:
       - 5173:5173
@@ -46,14 +29,23 @@ services:
       options:
         max-size: "10m"
         max-file: "5"
+  app:
+    build: ./library-back-end
+    container_name: app
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - 3001:3001
+    volumes:
+      - app:/usr/app
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
 volumes:
   mysql_data:
   react:
   app:
-networks:
-  frontend:
-    name: frontend
-    driver: bridge
-  backend:
-    name: backend
-    driver: bridge
