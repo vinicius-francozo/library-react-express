@@ -23,7 +23,7 @@ services:
     ports:
       - 5173:5173
     volumes:
-      - react:/usr/react
+      - ./library-front-end:/usr/react
     logging:
       driver: "json-file"
       options:
@@ -39,12 +39,17 @@ services:
     ports:
       - 3001:3001
     volumes:
-      - app:/usr/app
+      - ./library-back-end:/usr/app
     logging:
       driver: "json-file"
       options:
         max-size: "10m"
         max-file: "5"
+  phpmyadmin:
+    image: phpmyadmin
+    restart: always
+    ports:
+      - 8080:80
 volumes:
   mysql_data:
   react:
