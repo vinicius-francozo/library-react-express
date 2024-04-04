@@ -23,7 +23,7 @@ services:
     ports:
       - 5173:5173
     volumes:
-      - /home/vinicius/library-react-express/library-front-end:/usr/react
+      - ./library-front-end:/usr/react
     logging:
       driver: "json-file"
       options:
@@ -39,7 +39,7 @@ services:
     ports:
       - 3001:3001
     volumes:
-      - /home/vinicius/library-react-express/library-back-end:/usr/app
+      - ./library-back-end:/usr/app
     logging:
       driver: "json-file"
       options:
